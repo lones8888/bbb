@@ -1,0 +1,32 @@
+name: Voyage Bot
+
+on:
+  schedule:
+    - cron: "0 17 * * *"   # Her gün 17:00 UTC = 20:00 Türkiye saati
+  workflow_dispatch:        # Elle çalıştırmak için
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repo'yu checkout et
+        uses: actions/checkout@v3
+
+      - name: Python kurulumu
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Gereksinimleri yükle
+        run: pip install -r requirements.txt
+
+      - name: Chrome ve chromedriver yükle
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          echo "CHROME_BIN=/usr/bin/chromium-browser" >> $GITHUB_ENV
+          echo "CHROMEDRIVER=/usr/bin/chromedriver" >> $GITHUB_ENV
+
+      - name: Botu çalıştır
+        run: python voyage1.py
